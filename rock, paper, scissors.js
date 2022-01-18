@@ -1,60 +1,125 @@
-function computerPlay() {
+//Start the Game
+let cScore = 0;
+let pScore = 0;
+
+const startGame = () => {
+    const playButton = document.querySelector('.intro button');
+    const introScreen = document.querySelector('.intro');
+    const match = document.querySelector('.match');
+
+    playButton.addEventListener('click', () => {
+        introScreen.classList.add("fadeOut");
+        match.classList.add("fadeIn");
+    })
+}
+//Play Match
+const hands = document.querySelector('.hands')
+const playerHand = document.querySelector('.player-hand');
+const compuerHand = document.querySelector('.computer-hand');
+const choices = document.querySelectorAll(".choice");
+const restartButton = document.querySelector('.restart button')
+const match = document.querySelector('.match');
+const buttons = document.querySelector('.btns');
+const restart = document.querySelector('.restart');
+const showWhoWon = document.querySelector('.finalWinner');
+
+
+function play(e) {
+    const playerChoice = e.target.id;
+    const computerChoice = getComputerChoice();
+    const winner = playRound(computerChoice, playerChoice);
+
+    playerHand.src = `images/${playerChoice}.png`;
+    compuerHand.src = `./images/${computerChoice}.png`;
+}
+
+// Event listeners
+
+choices.forEach(choice => choice.addEventListener('click', play));
+
+// Restart button
+
+restartButton.addEventListener('click', () => {
+
+
+    buttons.classList.remove("fadeOut");
+    restart.classList.remove("fadeIn");
+    showWhoWon.classList.remove("fadeIn");
+    hands.classList.remove("fadeOut");
+    pScore = 0;
+    cScore = 0;
+    updateScore();
+
+    playerHand.src = `images/rock.png`;
+    compuerHand.src = `./images/rock.png`;
+
+
+
+
+
+});
+
+// Get computer choice
+
+function getComputerChoice() {
     let x = (Math.random() * (2 - 0) + 0).toFixed();
     if (x == 0) return "rock";
     if (x == 1) return "paper";
     if (x == 2) return "scissors";
 }
+//Get winner
 
+function playRound(computerChoice, playerChoice) {
+    const winner = document.querySelector('.winner');
 
-
-function playerPlay() {
-    let playerChoice = prompt("Pick one : Rock ? Paper ? Scissors ?");
-    return playerChoice.toLowerCase();
-
-}
-
-let computerScore = 0;
-let playerScore = 0;
-
-function playRound(computerSelection, playerSelection) {
-
-    if (computerSelection == "paper" && playerSelection == "rock" ||
-        computerSelection == "rock" && playerSelection == "scissors" ||
-        computerSelection == "scissors" && playerSelection == "paper") {
-        alert(`Computer won this one with ${computerSelection}. Try Again!`);
-        computerScore++;
+    if (computerChoice == "paper" && playerChoice == "rock" ||
+        computerChoice == "rock" && playerChoice == "scissors" ||
+        computerChoice == "scissors" && playerChoice == "paper") {
+        winner.textContent = `Computer wins this one with ${computerChoice.toUpperCase()}! :(`;
+        cScore++;
+        updateScore();
+        showWinner();
         return;
-    } else if (computerSelection == playerSelection) {
-        alert("Round ends with a DRAW!");
+    } else if (computerChoice == playerChoice) {
+        winner.textContent = `It's a DRAW! ${computerChoice.toUpperCase()} vs ${playerChoice.toUpperCase()}`;
         return;
-    } else if (playerSelection == "") {
-        alert("You forgot to pick something, sorry but we have to start again!")
-        return game();
-    } else if (computerSelection == "rock" && playerSelection == "paper" ||
-        computerSelection == "scissors" && playerSelection == "rock" ||
-        computerSelection == "paper" && playerSelection == "scissors") {
-        alert(`You won this one with ${playerSelection} against ${computerSelection}. Congratulations!`)
-        playerScore++;
+
+    } else if (computerChoice == "rock" && playerChoice == "paper" ||
+        computerChoice == "scissors" && playerChoice == "rock" ||
+        computerChoice == "paper" && playerChoice == "scissors") {
+        winner.textContent = `You won! ${playerChoice.toUpperCase()} beats ${computerChoice.toUpperCase()}!`
+        pScore++;
+        updateScore();
+        showWinner();
         return;
     }
-    alert("Typo? Try again!");
-    game();
-}
 
-function game() {
-    for (i = 0; i < 5; i++) {
-        playRound(computerPlay(), playerPlay());
+
+}
+const updateScore = () => {
+    const playerScore = document.querySelector('.player-score p');
+    const computerScore = document.querySelector('.computer-score p')
+    playerScore.textContent = pScore;
+    computerScore.textContent = cScore;
+}
+const showWinner = () => {
+
+    if (pScore == 5) {
+        showWhoWon.classList.add("fadeIn");
+        buttons.classList.add("fadeOut");
+        hands.classList.add("fadeOut");
+        restart.classList.add("fadeIn");
+        showWhoWon.textContent = "You won ! :)"
+
+        return;
+    } else if (cScore == 5) {
+        showWhoWon.classList.add("fadeIn");
+        buttons.classList.add("fadeOut");
+        hands.classList.add("fadeOut");
+        restart.classList.add("fadeIn");
+        showWhoWon.textContent = "You Lose :( Try Again";
+
+        return;
     }
-    if (computerScore > playerScore) {
-        console.log("Computer Won :(:(:(");
-        return;
-
-    } else if (computerScore == playerScore) {
-        console.log("Game ends with a DRAW!");
-        return;
-    } else console.log("Congratulations You Won!");
 }
-
-
-
-console.log(game());
+startGame();
